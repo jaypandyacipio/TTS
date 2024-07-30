@@ -1,4 +1,5 @@
 import json
+from pydub import AudioSegment
 from azure_tts import AzureTTS
 from voice_styles import VoiceStyles
 
@@ -20,12 +21,26 @@ class TTSGenerator:
                 audio_file = self.azure_tts.save_audio_stream_to_file(audio_stream, start_time, end_time)
                 audio_files.append(audio_file)
                 print(f'Generated speech for segment: "{text}" saved to: {audio_file}')
+            
+            combined_audio_file = self.combine_audio_files(audio_files)
+            print(f'Combined audio saved to: {combined_audio_file}')
+            return combined_audio_file
         except json.JSONDecodeError:
             print('Invalid JSON format. Please enter the captions as valid JSON.')
         except Exception as e:
             print(f'An error occurred: {e}')
         
-        return audio_files
+        return None
+
+    def combine_audio_files(self, audio_files):
+        combined = AudioSegment.empty()
+        for file in audio_files:
+            segment = AudioSegment.from_wav(file)
+            combined += segment
+
+        combined_audio_file = 'combined_speech.mp3'
+        combined.export(combined_audio_file, format='mp3')
+        return combined_audio_file
 
 # Example usage (for non-Streamlit use cases)
 if __name__ == "__main__":
