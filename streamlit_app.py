@@ -34,16 +34,15 @@ else:
 generate_button = st.button('Generate Speech')
 
 # Function to display generated audio
-def display_generated_audio(audio_files):
-    for audio_file in audio_files:
-        with open(audio_file, 'rb') as f:
-            st.download_button(
-                label=f'Download {audio_file}',
-                data=f,
-                file_name=audio_file,
-                mime='audio/wav'
-            )
-        st.success(f'Generated speech saved to: {audio_file}')
+def display_generated_audio(audio_file):
+    with open(audio_file, 'rb') as f:
+        st.download_button(
+            label=f'Download {audio_file}',
+            data=f,
+            file_name=audio_file,
+            mime='audio/mp3'
+        )
+    st.success(f'Generated speech saved to: {audio_file}')
 
 # Generate speech for all segments if button is clicked
 if generate_button:
@@ -52,8 +51,9 @@ if generate_button:
         if style_supported and not selected_style:
             st.error('Please select a speaking style.')
         else:
-            audio_files = tts_generator.generate_tts_for_segments(captions_input, selected_voice, selected_style)
-            display_generated_audio(audio_files)
+            combined_audio_file = tts_generator.generate_tts_for_segments(captions_input, selected_voice, selected_style)
+            if combined_audio_file:
+                display_generated_audio(combined_audio_file)
     except json.JSONDecodeError:
         st.error('Invalid JSON format. Please enter the captions as valid JSON.')
     except Exception as e:
