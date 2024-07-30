@@ -8,7 +8,7 @@ class AzureTTS:
 
     def generate_ssml(self, start_time, end_time, text, voice, style):
         duration = end_time - start_time
-        words_per_minute = 150  # Average speaking rate
+        words_per_minute = 160 # Average speaking rate
         num_words = len(text.split())
         actual_duration = (num_words / words_per_minute) * 60  # in seconds
         speaking_rate = actual_duration / duration
